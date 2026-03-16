@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ArcGIS — 14 förmågor</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --surface:rgba(21,31,51,.65);
+  --blue:#0079C1;--blue-light:#3aa3e0;
+  --teal:#007A87;--teal-light:#00a5b5;
+  --orange:#d4792a;--purple:#8b5cf6;
+  --text:#e8ecf2;--text-dim:#8899b0;--text-muted:#556680;
+  --border:rgba(37,48,73,.55);
+  --radius:10px;
+  --serif:'DM Serif Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+html{font-size:15px}
+body{font-family:var(--sans);background:transparent;color:var(--text);
+  min-height:100vh;padding:1.8rem 1.4rem;line-height:1.55}
+
+/* ─── Header ─── */
+.header{text-align:center;margin-bottom:1.6rem}
+.header-num{font-family:var(--serif);font-size:2.8rem;color:#fff;line-height:1;
+  background:linear-gradient(135deg,var(--blue-light),var(--teal-light));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-label{font-family:var(--mono);font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-top:.2rem}
+.header-sub{font-family:var(--serif);font-size:1.05rem;color:#fff;margin-top:.5rem}
+.header-line{width:40px;height:2px;margin:.6rem auto 0;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:1px}
+
+/* ─── Categories ─── */
+.cats{display:flex;flex-direction:column;gap:.55rem}
+
+.cat{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface);
+  transition:border-color .3s}
+.cat.open{border-color:var(--cc)}
+
+.cat-head{display:flex;align-items:center;gap:.65rem;padding:.7rem .85rem;cursor:pointer;user-select:none;
+  transition:background .2s}
+.cat-head:hover{background:rgba(255,255,255,.02)}
+
+.cat-dot{width:36px;height:36px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.2);border:1.5px solid var(--cc);transition:background .3s}
+.cat.open .cat-dot{background:var(--cc)}
+.cat-dot span{font-family:var(--serif);font-size:.95rem;color:var(--cc);transition:color .3s}
+.cat.open .cat-dot span{color:#fff}
+
+.cat-text{flex:1}
+.cat-tag{font-family:var(--mono);font-size:.45rem;letter-spacing:.1em;text-transform:uppercase;color:var(--cc)}
+.cat-title{font-size:.82rem;font-weight:600;color:#fff;line-height:1.25;margin-top:.08rem}
+
+.cat-count{font-family:var(--mono);font-size:.55rem;color:var(--text-muted);flex-shrink:0}
+
+.cat-chevron{width:14px;height:14px;flex-shrink:0;color:var(--text-muted);transition:transform .3s,color .3s;margin-left:.2rem}
+.cat.open .cat-chevron{transform:rotate(180deg);color:var(--cc)}
+
+/* Expandable body */
+.cat-body{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.25,.46,.45,.94)}
+.cat.open .cat-body{max-height:500px}
+
+.cap-list{padding:0 .85rem .65rem}
+.cap{display:flex;align-items:flex-start;gap:.5rem;padding:.4rem 0;border-bottom:1px solid var(--border)}
+.cap:last-child{border-bottom:none}
+.cap-id{font-family:var(--mono);font-size:.5rem;font-weight:600;color:var(--cc);
+  background:rgba(0,0,0,.25);padding:.15rem .35rem;border-radius:3px;flex-shrink:0;margin-top:1px;min-width:22px;text-align:center}
+.cap-name{font-size:.72rem;font-weight:600;color:#fff;line-height:1.25}
+.cap-desc{font-size:.6rem;color:var(--text-dim);line-height:1.45;margin-top:.06rem}
+.cap-prod{font-family:var(--mono);font-size:.48rem;color:var(--text-muted);margin-top:.1rem}
+
+/* ─── Enablers ─── */
+.enablers{margin-top:1rem;padding:.5rem .75rem;border:1px dashed var(--border);border-radius:var(--radius);background:rgba(21,31,51,.35)}
+.enablers-label{font-family:var(--mono);font-size:.42rem;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.3rem}
+.enabler-row{display:flex;gap:.3rem;flex-wrap:wrap}
+.enabler-tag{font-size:.55rem;color:var(--text-dim);padding:.15rem .4rem;background:rgba(26,34,53,.6);border-radius:3px;border:1px solid var(--border)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-num">14</div>
+  <div class="header-label">Geospatiala förmågor</div>
+  <div class="header-sub">Fyra kategorier — en plattform</div>
+  <div class="header-line"></div>
+</div>
+
+<div class="cats" id="cats"></div>
+
+<div class="enablers">
+  <div class="enablers-label">Infrastrukturella enablers</div>
+  <div class="enabler-row">
+    <span class="enabler-tag">Geodatalagring & förvaltning</span>
+    <span class="enabler-tag">CAD/BIM-integration</span>
+    <span class="enabler-tag">Enterprise-systemintegration</span>
+  </div>
+</div>
+
+<script>
+const C=[
+  {id:'a',letter:'A',cc:'var(--blue-light)',tag:'Kategori A',title:'Förstå — insikt & analys',caps:[
+    {i:'F1',n:'Kartografi & visualisering',d:'Tematiska kartor, referenskartor, atlaser.',p:'ArcGIS Pro · Map Viewer'},
+    {i:'F2',n:'Spatial analys & datavetenskap',d:'Modellering, geostatistik, maskininlärning.',p:'Spatial Analyst · Notebooks'},
+    {i:'F3',n:'Bild- & fjärranalys',d:'Spektralanalys, förändringsdetektion.',p:'ArcGIS Image · Image Analyst'},
+    {i:'F4',n:'3D-visualisering & analys',d:'Terrängmodeller, stadsmodeller, inomhusmiljöer.',p:'3D Analyst · Scene Viewer'}]},
+  {id:'b',letter:'B',cc:'var(--teal-light)',tag:'Kategori B',title:'Agera — operativ förmåga',caps:[
+    {i:'F5',n:'Dashboards & lägesbilder',d:'Nulägesbilder med kartor, diagram, indikatorer.',p:'Dashboards · Experience Builder'},
+    {i:'F6',n:'Mobila arbetsflöden',d:'Datainsamling, inspektion — online och offline.',p:'Field Maps · Survey123 · Workforce'},
+    {i:'F7',n:'Ruttning & logistik',d:'Ruttoptimering, servicezoner.',p:'Network Analyst · Fleet Management'},
+    {i:'F8',n:'Geokodning & berikning',d:'Adresser → koordinater, platsbaserad berikning.',p:'Geocoding · Enrich · Spatial Join'}]},
+  {id:'c',letter:'C',cc:'var(--orange)',tag:'Kategori C',title:'Övervaka — realtid & automation',caps:[
+    {i:'F9',n:'IoT & realtidsanalys',d:'Sensornätverk, geoevents, automatiserade triggers.',p:'ArcGIS Velocity · GeoEvent Server'},
+    {i:'F10',n:'AI & automatiserad tolkning',d:'Objektidentifiering, klassificering.',p:'Deep Learning · GeoAI'},
+    {i:'F11',n:'Big Data & bearbetning',d:'Massiva datamängder, mobilitetsflöden.',p:'Velocity · Big Data Store'}]},
+  {id:'d',letter:'D',cc:'var(--purple)',tag:'Kategori D',title:'Dela & integrera',caps:[
+    {i:'F12',n:'Portaler & datadelning',d:'Publicering, delning, åtkomstkontroll.',p:'Portal · Hub · Living Atlas'},
+    {i:'F13',n:'Reality Capture',d:'Drönare, LiDAR → enterprisefärdiga 3D-modeller.',p:'ArcGIS Reality · Site Scan'},
+    {i:'F14',n:'Storytelling',d:'Berättelsedrivna informationsprodukter.',p:'StoryMaps · Media Maps'}]}
+];
+
+const root = document.getElementById('cats');
+C.forEach(c => {
+  const el = document.createElement('div');
+  el.className = 'cat';
+  el.style.setProperty('--cc', c.cc);
+  el.innerHTML = `
+    <div class="cat-head" onclick="toggle('${c.id}')">
+      <div class="cat-dot"><span>${c.letter}</span></div>
+      <div class="cat-text">
+        <div class="cat-tag">${c.tag}</div>
+        <div class="cat-title">${c.title}</div>
+      </div>
+      <span class="cat-count">${c.caps.length}</span>
+      <svg class="cat-chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M3.5 5.25L7 8.75l3.5-3.5"/></svg>
+    </div>
+    <div class="cat-body">
+      <div class="cap-list">
+        ${c.caps.map(x => `
+          <div class="cap">
+            <span class="cap-id">${x.i}</span>
+            <div>
+              <div class="cap-name">${x.n}</div>
+              <div class="cap-desc">${x.d}</div>
+              <div class="cap-prod">${x.p}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+  el.id = 'cat-' + c.id;
+  root.appendChild(el);
+});
+
+function toggle(id) {
+  const el = document.getElementById('cat-' + id);
+  const wasOpen = el.classList.contains('open');
+  document.querySelectorAll('.cat.open').forEach(c => c.classList.remove('open'));
+  if (!wasOpen) el.classList.add('open');
+}
+</script>
+</body>
+</html>
